@@ -1,0 +1,81 @@
+﻿@page "/developer/add"
+@page "/developer/edit/{Id:guid}"
+@using TestBlazor.Shared.Models
+@using TestBlazor.Shared.Models.Dto
+
+
+@inject HttpClient HttpClient
+@inject NavigationManager NavigationManager
+
+
+<h3>Add Developer</h3>
+<PageTitle>Add Developer</PageTitle>
+
+<EditForm Model="@developer" OnValidSubmit="SaveDeveloper">
+    <DataAnnotationsValidator />
+    <div class="mb-3">
+        <label for="Name" class="form-label">User Name</label>
+        <div class="col-md-4">
+            <InputText class="form-control" @bind-Value="developer.Username" />
+        </div>
+        <ValidationMessage For="@(() => developer.Username)" />
+    </div>
+    <div class="mb-3">
+        <label for="CellNumber" class="form-label">Cell Number</label>
+        <div class="col-md-4">
+            <InputText class="form-control" @bind-Value="developer.Cellnumber" />
+        </div>
+        <ValidationMessage For="@(() => developer.Cellnumber)" />
+    </div>
+    <div class="mb-3">
+        <label for="Email" class="form-label">Email</label>
+        <div class="col-md-4">
+            <InputText class="form-control" @bind-Value="developer.Email" />
+        </div>
+        <ValidationMessage For="@(() => developer.Email)" />
+    </div>
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary">Save</button>
+        <button class="btn btn-light" @onclick="Cancel">Cancel</button>
+    </div>
+
+</EditForm>
+
+@code {
+
+    [Parameter]
+    public Guid Id { get; set; }
+
+    protected string Title = "Add";
+
+    protected Developer developer = new();
+
+    protected DeveloperDto developerDto = new();
+
+    protected override async Task OnParametersSetAsync()
+    {
+
+       if( Id != Guid.Empty)
+       {
+            Title = "Edit";
+            developer = await HttpClient.GetFromJsonAsync<Developer>($"api/developer/{Id}");
+       }
+    }
+    protected async Task SaveDeveloper()
+    {
+        if (Id != Guid.Empty)
+        {
+            await HttpClient.PutAsJsonAsync($"api/developer", developer);
+        }
+        else
+        {
+            await HttpClient.PostAsJsonAsync($"api/developer", developer);
+        }
+        Cancel();
+        }
+
+       public void Cancel()
+       {
+         NavigationManager.NavigateTo("/developerdetail");
+       }
+}
