@@ -8,12 +8,12 @@ namespace TestBlazor.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UserController : ControllerBase
+    public class DeveloperController : ControllerBase
     {
 
         private readonly IDeveloperRepository _developerRepository;
 
-        public UserController(IDeveloperRepository developerRepository)
+        public DeveloperController(IDeveloperRepository developerRepository)
         {
             _developerRepository = developerRepository;
         }
